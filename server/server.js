@@ -1,5 +1,7 @@
 const path = require('path');
+const http = require('http');
 const express = require('express');
+const socketIO = require('socket.io');
 //const hbs = require('hbs');
 
 const publicPath = path.join(__dirname, '../public');
@@ -7,19 +9,24 @@ const publicPath = path.join(__dirname, '../public');
 const port = process.env.PORT || 3000; 
 
 var app = express();
+// use this than app
+var server = http.createServer(app);
+// can do anything from here
+var io = socketIO(server);
 
-// set up express and configure middleware, on 3000
-// I copied over some code, not sure if we are to use hbs
 
-// middleware
-//hbs.registerPartials ()
-//app.set('view engine', 'hbs');
 app.use(express.static(publicPath));
 
+io.on('connection', (socket) => {
+  console.log('New user connected');
 
-//app.get('/', (req, res) => {
-//  res.render('home.hbs, {})
+  socket.on('disconnect', () => {
+    console.log('User was disconnected')
+  })
 
-app.listen(port, () => {
+});
+
+// change app to server
+server.listen(port, () => {
   console.log(`Server is up on port ${port}`);
 }); 
