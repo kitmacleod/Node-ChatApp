@@ -7,7 +7,6 @@ const socketIO = require('socket.io');
 const publicPath = path.join(__dirname, '../public');
 // Heroku 
 const port = process.env.PORT || 3000; 
-
 var app = express();
 // use this than app
 var server = http.createServer(app);
@@ -20,10 +19,20 @@ app.use(express.static(publicPath));
 io.on('connection', (socket) => {
   console.log('New user connected');
 
-  socket.on('disconnect', () => {
-    console.log('User was disconnected')
-  })
+  socket.emit('newMessage', {
+    from: 'mike',
+    text: 'hey',
+    createAt: 12345
+  });
 
+  // custom event listener
+  socket.on('createMessage', (message) => {
+    console.log('createMessage', message);
+  });
+
+  socket.on('disconnect', () => {
+    console.log('User was disconnected');
+  });
 });
 
 // change app to server
